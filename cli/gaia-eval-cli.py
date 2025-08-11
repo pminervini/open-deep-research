@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-# EXAMPLE COMMAND: from folder examples/open_deep_research, run: python cli/gaia-eval-cli.py --concurrency 32 --run-name generate-traces-03-apr-noplanning --model gpt-4o
 import argparse
 import json
 import os
@@ -38,7 +37,6 @@ from smolagents import (
     GoogleSearchTool,
     LiteLLMModel,
     Model,
-    OpenAIServerModel,
     ToolCallingAgent,
 )
 
@@ -91,25 +89,17 @@ def create_model(model_name: str, api_base: str = None, api_key: str = None) -> 
         "custom_role_conversions": custom_role_conversions,
     }
     
-    # Use OpenAIServerModel for custom API endpoints, LiteLLMModel for standard providers
     if api_base:
         model_params["api_base"] = api_base
-        if api_key:
-            model_params["api_key"] = api_key
-        if model_name == "o1":
-            model_params["max_completion_tokens"] = 8192
-        else:
-            model_params["max_tokens"] = 4096
-        return OpenAIServerModel(**model_params)
+    if api_key:
+        model_params["api_key"] = api_key
+    if model_name == "o1":
+        model_params["reasoning_effort"] = "high"
+        model_params["max_completion_tokens"] = 8192
     else:
-        if api_key:
-            model_params["api_key"] = api_key
-        if model_name == "o1":
-            model_params["reasoning_effort"] = "high"
-            model_params["max_completion_tokens"] = 8192
-        else:
-            model_params["max_tokens"] = 4096
-        return LiteLLMModel(**model_params)
+        model_params["max_tokens"] = 4096
+        
+    return LiteLLMModel(**model_params)
 
 
 def create_agent_team(model: Model):

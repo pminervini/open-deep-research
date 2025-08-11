@@ -48,7 +48,7 @@ python cli/research-agent-cli.py --model "gpt-4o-mini" "Your question here!"
 
 ### Using a local OpenAI-compatible endpoint
 ```bash
-python cli/research-agent-cli.py --model "qwen3:32b" --api-base "http://127.0.0.1:11434/v1" --api-key "dummy" "Your question here!"
+python cli/research-agent-cli.py --model "qwen3:32b" --api-base "http://127.0.0.1:11434/v1" --api-key "dummy" "2+2?"
 ```
 
 ### CLI Options

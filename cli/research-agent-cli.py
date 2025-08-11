@@ -24,7 +24,6 @@ from smolagents import (
     GoogleSearchTool,
     # InferenceClientModel,
     LiteLLMModel,
-    OpenAIServerModel,
     ToolCallingAgent,
 )
 
@@ -70,18 +69,14 @@ def create_agent(model="o1", api_base=None, api_key=None):
         "max_completion_tokens": 8192,
     }
     
-    # Use OpenAIServerModel for custom API endpoints, LiteLLMModel for standard providers
     if api_base:
         model_params["api_base"] = api_base
-        if api_key:
-            model_params["api_key"] = api_key
-        model = OpenAIServerModel(**model_params)
-    else:
-        if api_key:
-            model_params["api_key"] = api_key
-        if model == "o1":
-            model_params["reasoning_effort"] = "high"
-        model = LiteLLMModel(**model_params)
+    if api_key:
+        model_params["api_key"] = api_key
+    if model == "o1":
+        model_params["reasoning_effort"] = "high"
+        
+    model = LiteLLMModel(**model_params)
 
     text_limit = 100000
     browser = SimpleTextBrowser(**BROWSER_CONFIG)
