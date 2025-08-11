@@ -370,26 +370,6 @@ class SimpleTextBrowser:
         return (header, self.viewport)
 
 
-class SearchInformationTool(Tool):
-    name = "web_search"
-    description = "Perform a web search query (think a google search) and returns the search results."
-    inputs = {"query": {"type": "string", "description": "The web search query to perform."}}
-    inputs["filter_year"] = {
-        "type": "string",
-        "description": "[Optional parameter]: filter the search results to only include pages from a specific year. For example, '2020' will only include pages from 2020. Make sure to use this parameter if you're trying to search for articles from a specific date!",
-        "nullable": True,
-    }
-    output_type = "string"
-
-    def __init__(self, browser):
-        super().__init__()
-        self.browser = browser
-
-    def forward(self, query: str, filter_year: int | None = None) -> str:
-        self.browser.visit_page(f"google: {query}", filter_year=filter_year)
-        header, content = self.browser._state()
-        return header.strip() + "\n=======================\n" + content
-
 
 class VisitTool(Tool):
     name = "visit_page"
@@ -407,39 +387,6 @@ class VisitTool(Tool):
         return header.strip() + "\n=======================\n" + content
 
 
-class DownloadTool(Tool):
-    name = "download_file"
-    description = """
-Download a file at a given URL. The file should be of this format: [".xlsx", ".pptx", ".wav", ".mp3", ".m4a", ".png", ".docx"]
-After using this tool, for further inspection of this page you should return the download path to your manager via final_answer, and they will be able to inspect it.
-DO NOT use this tool for .pdf or .txt or .htm files: for these types of files use visit_page with the file url instead."""
-    inputs = {"url": {"type": "string", "description": "The relative or absolute url of the file to be downloaded."}}
-    output_type = "string"
-
-    def __init__(self, browser):
-        super().__init__()
-        self.browser = browser
-
-    def forward(self, url: str) -> str:
-        import requests
-
-        if "arxiv" in url:
-            url = url.replace("abs", "pdf")
-        response = requests.get(url)
-        content_type = response.headers.get("content-type", "")
-        extension = mimetypes.guess_extension(content_type)
-        if extension and isinstance(extension, str):
-            new_path = f"./downloads/file{extension}"
-        else:
-            new_path = "./downloads/file.object"
-
-        with open(new_path, "wb") as f:
-            f.write(response.content)
-
-        if "pdf" in extension or "txt" in extension or "htm" in extension:
-            raise Exception("Do not use this tool for pdf or txt or html files: use visit_page instead.")
-
-        return f"File was downloaded and saved under path {new_path}."
 
 
 class ArchiveSearchTool(Tool):
