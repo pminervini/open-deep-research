@@ -15,30 +15,13 @@ import pandas as pd
 from dotenv import load_dotenv
 from huggingface_hub import login, snapshot_download
 from src.open_deep_research.reformulator import prepare_response
-from src.open_deep_research.run_agents import (
-    get_single_file_description,
-    get_zip_description,
-)
+from src.open_deep_research.run_agents import get_single_file_description, get_zip_description
 from src.open_deep_research.text_inspector_tool import TextInspectorTool
-from src.open_deep_research.text_web_browser import (
-    ArchiveSearchTool,
-    FinderTool,
-    FindNextTool,
-    PageDownTool,
-    PageUpTool,
-    SimpleTextBrowser,
-    VisitTool,
-)
+from src.open_deep_research.text_web_browser import ArchiveSearchTool, FinderTool, FindNextTool, PageDownTool, PageUpTool, SimpleTextBrowser, VisitTool
 from src.open_deep_research.visual_qa import visualizer
 from tqdm import tqdm
 
-from smolagents import (
-    CodeAgent,
-    GoogleSearchTool,
-    LiteLLMModel,
-    Model,
-    ToolCallingAgent,
-)
+from smolagents import CodeAgent, GoogleSearchTool, LiteLLMModel, Model, ToolCallingAgent
 
 load_dotenv(override=True)
 login(os.getenv("HF_TOKEN"))

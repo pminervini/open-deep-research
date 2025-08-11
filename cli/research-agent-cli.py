@@ -8,23 +8,10 @@ import threading
 from dotenv import load_dotenv
 from huggingface_hub import login
 from src.open_deep_research.text_inspector_tool import TextInspectorTool
-from src.open_deep_research.text_web_browser import (
-    ArchiveSearchTool,
-    FinderTool,
-    FindNextTool,
-    PageDownTool,
-    PageUpTool,
-    SimpleTextBrowser,
-    VisitTool,
-)
+from src.open_deep_research.text_web_browser import ArchiveSearchTool, FinderTool, FindNextTool, PageDownTool, PageUpTool, SimpleTextBrowser, VisitTool
 from src.open_deep_research.visual_qa import visualizer
 
-from smolagents import (
-    CodeAgent,
-    GoogleSearchTool,
-    LiteLLMModel,
-    ToolCallingAgent,
-)
+from smolagents import CodeAgent, GoogleSearchTool, LiteLLMModel, ToolCallingAgent
 
 load_dotenv(override=True)
 login(os.getenv("HF_TOKEN"))
