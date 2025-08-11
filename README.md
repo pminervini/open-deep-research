@@ -33,18 +33,15 @@ The agent uses the `GoogleSearchTool` for web search, which requires an environm
 - `SERPER_API_KEY` for Serper: [Sign up here to get a key](https://serper.dev/signup)
 
 Depending on the model you want to use, you may need to set environment variables.
-For example, to use the default `o1` model, you need to set the `OPENAI_API_KEY` environment variable.
+For example, to use the default `gpt-4o-mini` model, you need to set the `OPENAI_API_KEY` environment variable.
 [Sign up here to get a key](https://platform.openai.com/signup).
-
-> [!WARNING]
-> The use of the default `o1` model is restricted to tier-3 access: https://help.openai.com/en/articles/10362446-api-access-to-o1-and-o3-mini
 
 
 ## Usage
 
 Then you're good to go! Run the run.py script, as in:
 ```bash
-python run.py --model-id "o1" "Your question here!"
+python run.py --model-id "gpt-4o-mini" "Your question here!"
 ```
 
 ## Full reproducibility of results
