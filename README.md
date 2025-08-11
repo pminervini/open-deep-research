@@ -26,12 +26,6 @@ Run the following command to install the required dependencies from the `require
 pip install -r requirements.txt
 ```
 
-### Install the development version of `smolagents`
-
-```bash
-pip install -e ../../.[dev]
-```
-
 ### Set up environment variables
 
 The agent uses the `GoogleSearchTool` for web search, which requires an environment variable with the corresponding API key, based on the selected provider:
