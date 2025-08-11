@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-# EXAMPLE COMMAND: from folder examples/open_deep_research, run: python run_gaia.py --concurrency 32 --run-name generate-traces-03-apr-noplanning --model-id gpt-4o
+# EXAMPLE COMMAND: from folder examples/open_deep_research, run: python cli/gaia-eval-cli.py --concurrency 32 --run-name generate-traces-03-apr-noplanning --model gpt-4o
 import argparse
 import json
 import os
@@ -38,6 +38,7 @@ from smolagents import (
     GoogleSearchTool,
     LiteLLMModel,
     Model,
+    OpenAIServerModel,
     ToolCallingAgent,
 )
 
@@ -51,7 +52,9 @@ append_answer_lock = threading.Lock()
 def parse_args():
     parser = argparse.ArgumentParser()
     parser.add_argument("--concurrency", type=int, default=8)
-    parser.add_argument("--model-id", type=str, default="o1")
+    parser.add_argument("--model", type=str, default="o1")
+    parser.add_argument("--api-base", type=str, help="Base URL for the API endpoint")
+    parser.add_argument("--api-key", type=str, help="API key for authentication")
     parser.add_argument("--run-name", type=str, required=True)
     parser.add_argument("--set-to-run", type=str, default="validation")
     parser.add_argument("--use-open-models", type=bool, default=False)
@@ -79,6 +82,34 @@ BROWSER_CONFIG = {
 }
 
 os.makedirs(f"./{BROWSER_CONFIG['downloads_folder']}", exist_ok=True)
+
+
+def create_model(model_name: str, api_base: str = None, api_key: str = None) -> Model:
+    """Create a model instance based on the provided parameters."""
+    model_params = {
+        "model_id": model_name,
+        "custom_role_conversions": custom_role_conversions,
+    }
+    
+    # Use OpenAIServerModel for custom API endpoints, LiteLLMModel for standard providers
+    if api_base:
+        model_params["api_base"] = api_base
+        if api_key:
+            model_params["api_key"] = api_key
+        if model_name == "o1":
+            model_params["max_completion_tokens"] = 8192
+        else:
+            model_params["max_tokens"] = 4096
+        return OpenAIServerModel(**model_params)
+    else:
+        if api_key:
+            model_params["api_key"] = api_key
+        if model_name == "o1":
+            model_params["reasoning_effort"] = "high"
+            model_params["max_completion_tokens"] = 8192
+        else:
+            model_params["max_tokens"] = 4096
+        return LiteLLMModel(**model_params)
 
 
 def create_agent_team(model: Model):
@@ -174,18 +205,10 @@ def append_answer(entry: dict, jsonl_file: str) -> None:
 
 
 def answer_single_question(
-    example: dict, model_id: str, answers_file: str, visual_inspection_tool: TextInspectorTool
+    example: dict, model_name: str, answers_file: str, visual_inspection_tool: TextInspectorTool, 
+    api_base: str = None, api_key: str = None
 ) -> None:
-    model_params: dict[str, Any] = {
-        "model_id": model_id,
-        "custom_role_conversions": custom_role_conversions,
-    }
-    if model_id == "o1":
-        model_params["reasoning_effort"] = "high"
-        model_params["max_completion_tokens"] = 8192
-    else:
-        model_params["max_tokens"] = 4096
-    model = LiteLLMModel(**model_params)
+    model = create_model(model_name, api_base, api_key)
     # model = InferenceClientModel(model_id="Qwen/Qwen3-32B", provider="novita", max_tokens=4096)
     document_inspection_tool = TextInspectorTool(model, 100000)
 
@@ -291,14 +314,14 @@ def main():
 
     with ThreadPoolExecutor(max_workers=args.concurrency) as exe:
         futures = [
-            exe.submit(answer_single_question, example, args.model_id, answers_file, visualizer)
+            exe.submit(answer_single_question, example, args.model, answers_file, visualizer, args.api_base, args.api_key)
             for example in tasks_to_run
         ]
         for f in tqdm(as_completed(futures), total=len(tasks_to_run), desc="Processing tasks"):
             f.result()
 
     # for example in tasks_to_run:
-    #     answer_single_question(example, args.model_id, answers_file, visualizer)
+    #     answer_single_question(example, args.model, answers_file, visualizer, args.api_base, args.api_key)
     print("All tasks processed.")
 
 

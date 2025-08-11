@@ -56,6 +56,30 @@ python cli/research-agent-cli.py --model "qwen3:32b" --api-base "http://127.0.0.
 - `--api-base`: Base URL for custom API endpoints (e.g., local LLM servers)
 - `--api-key`: API key for authentication
 
+## GAIA Evaluation
+
+To run evaluation on the GAIA benchmark dataset, use the evaluation CLI:
+
+### Using OpenAI or other standard providers
+```bash
+python cli/gaia-eval-cli.py --model "gpt-4o" --run-name "my-evaluation" --concurrency 8
+```
+
+### Using a local OpenAI-compatible endpoint
+```bash
+python cli/gaia-eval-cli.py --model "qwen3:32b" --api-base "http://127.0.0.1:11434/v1" --api-key "dummy" --run-name "local-evaluation" --concurrency 4
+```
+
+### GAIA CLI Options
+- `--model`: Model name (replaces the old `--model-id` flag)
+- `--api-base`: Base URL for custom API endpoints (e.g., local LLM servers)  
+- `--api-key`: API key for authentication
+- `--run-name`: Name for this evaluation run (required)
+- `--concurrency`: Number of parallel tasks (default: 8)
+- `--set-to-run`: Dataset split to evaluate ("validation" or "test", default: "validation")
+- `--use-raw-dataset`: Use the raw GAIA dataset instead of the annotated version
+- `--use-open-models`: Use open models (legacy option)
+
 ## Full reproducibility of results
 
 The data used in our submissions to GAIA was augmented in this way:
