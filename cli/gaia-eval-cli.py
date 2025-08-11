@@ -57,6 +57,20 @@ def parse_args():
     parser.add_argument("--set-to-run", type=str, default="validation")
     parser.add_argument("--use-open-models", type=bool, default=False)
     parser.add_argument("--use-raw-dataset", action="store_true")
+    parser.add_argument(
+        "--manager-agent-type", 
+        type=str, 
+        choices=["CodeAgent", "ToolCallingAgent"], 
+        default="CodeAgent",
+        help="Type of agent to use for the manager (default: CodeAgent)"
+    )
+    parser.add_argument(
+        "--search-agent-type", 
+        type=str, 
+        choices=["CodeAgent", "ToolCallingAgent"], 
+        default="ToolCallingAgent",
+        help="Type of agent to use for the search agent (default: ToolCallingAgent)"
+    )
     return parser.parse_args()
 
 
@@ -102,7 +116,7 @@ def create_model(model_name: str, api_base: str = None, api_key: str = None) -> 
     return LiteLLMModel(**model_params)
 
 
-def create_agent_team(model: Model):
+def create_agent_team(model: Model, manager_agent_type: str = "CodeAgent", search_agent_type: str = "ToolCallingAgent"):
     text_limit = 100000
     ti_tool = TextInspectorTool(model, text_limit)
 
@@ -119,34 +133,50 @@ def create_agent_team(model: Model):
         TextInspectorTool(model, text_limit),
     ]
 
-    text_webbrowser_agent = ToolCallingAgent(
-        model=model,
-        tools=WEB_TOOLS,
-        max_steps=20,
-        verbosity_level=2,
-        planning_interval=4,
-        name="search_agent",
-        description="""A team member that will search the internet to answer your question.
+    # Create search agent based on specified type
+    search_agent_config = {
+        "model": model,
+        "max_steps": 20,
+        "verbosity_level": 2,
+        "planning_interval": 4,
+        "name": "search_agent",
+        "description": """A team member that will search the internet to answer your question.
     Ask him for all your questions that require browsing the web.
     Provide him as much context as possible, in particular if you need to search on a specific timeframe!
     And don't hesitate to provide him with a complex search task, like finding a difference between two webpages.
     Your request must be a real sentence, not a google search! Like "Find me this information (...)" rather than a few keywords.
     """,
-        provide_run_summary=True,
-    )
+        "provide_run_summary": True,
+    }
+    
+    if search_agent_type == "ToolCallingAgent":
+        search_agent_config["tools"] = WEB_TOOLS
+        text_webbrowser_agent = ToolCallingAgent(**search_agent_config)
+    else:  # CodeAgent
+        search_agent_config["tools"] = WEB_TOOLS
+        search_agent_config["additional_authorized_imports"] = ["*"]
+        text_webbrowser_agent = CodeAgent(**search_agent_config)
+    
     text_webbrowser_agent.prompt_templates["managed_agent"]["task"] += """You can navigate to .txt online files.
     If a non-html page is in another format, especially .pdf or a Youtube video, use tool 'inspect_file_as_text' to inspect it.
     Additionally, if after some searching you find out that you need more information to answer the question, you can use `final_answer` with your request for clarification as argument to request for more information."""
 
-    manager_agent = CodeAgent(
-        model=model,
-        tools=[visualizer, ti_tool],
-        max_steps=12,
-        verbosity_level=2,
-        additional_authorized_imports=["*"],
-        planning_interval=4,
-        managed_agents=[text_webbrowser_agent],
-    )
+    # Create manager agent based on specified type
+    manager_agent_config = {
+        "model": model,
+        "tools": [visualizer, ti_tool],
+        "max_steps": 12,
+        "verbosity_level": 2,
+        "planning_interval": 4,
+        "managed_agents": [text_webbrowser_agent],
+    }
+    
+    if manager_agent_type == "CodeAgent":
+        manager_agent_config["additional_authorized_imports"] = ["*"]
+        manager_agent = CodeAgent(**manager_agent_config)
+    else:  # ToolCallingAgent
+        manager_agent = ToolCallingAgent(**manager_agent_config)
+        
     return manager_agent
 
 
@@ -196,13 +226,13 @@ def append_answer(entry: dict, jsonl_file: str) -> None:
 
 def answer_single_question(
     example: dict, model_name: str, answers_file: str, visual_inspection_tool: TextInspectorTool, 
-    api_base: str = None, api_key: str = None
+    api_base: str = None, api_key: str = None, manager_agent_type: str = "CodeAgent", search_agent_type: str = "ToolCallingAgent"
 ) -> None:
     model = create_model(model_name, api_base, api_key)
     # model = InferenceClientModel(model_id="Qwen/Qwen3-32B", provider="novita", max_tokens=4096)
     document_inspection_tool = TextInspectorTool(model, 100000)
 
-    agent = create_agent_team(model)
+    agent = create_agent_team(model, manager_agent_type, search_agent_type)
 
     augmented_question = """You have one question to answer. It is paramount that you provide a correct answer.
 Give it all you can: I know for a fact that you have access to all the relevant tools to solve it and find the correct answer (the answer does exist).
@@ -304,7 +334,17 @@ def main():
 
     with ThreadPoolExecutor(max_workers=args.concurrency) as exe:
         futures = [
-            exe.submit(answer_single_question, example, args.model, answers_file, visualizer, args.api_base, args.api_key)
+            exe.submit(
+                answer_single_question, 
+                example, 
+                args.model, 
+                answers_file, 
+                visualizer, 
+                args.api_base, 
+                args.api_key,
+                args.manager_agent_type,
+                args.search_agent_type
+            )
             for example in tasks_to_run
         ]
         for f in tqdm(as_completed(futures), total=len(tasks_to_run), desc="Processing tasks"):

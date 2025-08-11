@@ -42,6 +42,20 @@ def parse_args():
     parser.add_argument("--model", type=str, default="o1")
     parser.add_argument("--api-base", type=str, help="Base URL for the API endpoint")
     parser.add_argument("--api-key", type=str, help="API key for authentication")
+    parser.add_argument(
+        "--manager-agent-type", 
+        type=str, 
+        choices=["CodeAgent", "ToolCallingAgent"], 
+        default="CodeAgent",
+        help="Type of agent to use for the manager (default: CodeAgent)"
+    )
+    parser.add_argument(
+        "--search-agent-type", 
+        type=str, 
+        choices=["CodeAgent", "ToolCallingAgent"], 
+        default="ToolCallingAgent",
+        help="Type of agent to use for the search agent (default: ToolCallingAgent)"
+    )
     return parser.parse_args()
 
 
@@ -62,7 +76,7 @@ BROWSER_CONFIG = {
 os.makedirs(f"./{BROWSER_CONFIG['downloads_folder']}", exist_ok=True)
 
 
-def create_agent(model="o1", api_base=None, api_key=None):
+def create_agent(model="o1", api_base=None, api_key=None, manager_agent_type="CodeAgent", search_agent_type="ToolCallingAgent"):
     model_params = {
         "model_id": model,
         "custom_role_conversions": custom_role_conversions,
@@ -90,34 +104,50 @@ def create_agent(model="o1", api_base=None, api_key=None):
         ArchiveSearchTool(browser),
         TextInspectorTool(model, text_limit),
     ]
-    text_webbrowser_agent = ToolCallingAgent(
-        model=model,
-        tools=WEB_TOOLS,
-        max_steps=20,
-        verbosity_level=2,
-        planning_interval=4,
-        name="search_agent",
-        description="""A team member that will search the internet to answer your question.
+    
+    # Create search agent based on specified type
+    search_agent_config = {
+        "model": model,
+        "max_steps": 20,
+        "verbosity_level": 2,
+        "planning_interval": 4,
+        "name": "search_agent",
+        "description": """A team member that will search the internet to answer your question.
     Ask him for all your questions that require browsing the web.
     Provide him as much context as possible, in particular if you need to search on a specific timeframe!
     And don't hesitate to provide him with a complex search task, like finding a difference between two webpages.
     Your request must be a real sentence, not a google search! Like "Find me this information (...)" rather than a few keywords.
     """,
-        provide_run_summary=True,
-    )
+        "provide_run_summary": True,
+    }
+    
+    if search_agent_type == "ToolCallingAgent":
+        search_agent_config["tools"] = WEB_TOOLS
+        text_webbrowser_agent = ToolCallingAgent(**search_agent_config)
+    else:  # CodeAgent
+        search_agent_config["tools"] = WEB_TOOLS
+        search_agent_config["additional_authorized_imports"] = ["*"]
+        text_webbrowser_agent = CodeAgent(**search_agent_config)
+    
     text_webbrowser_agent.prompt_templates["managed_agent"]["task"] += """You can navigate to .txt online files.
     If a non-html page is in another format, especially .pdf or a Youtube video, use tool 'inspect_file_as_text' to inspect it.
     Additionally, if after some searching you find out that you need more information to answer the question, you can use `final_answer` with your request for clarification as argument to request for more information."""
 
-    manager_agent = CodeAgent(
-        model=model,
-        tools=[visualizer, TextInspectorTool(model, text_limit)],
-        max_steps=12,
-        verbosity_level=2,
-        additional_authorized_imports=["*"],
-        planning_interval=4,
-        managed_agents=[text_webbrowser_agent],
-    )
+    # Create manager agent based on specified type
+    manager_agent_config = {
+        "model": model,
+        "tools": [visualizer, TextInspectorTool(model, text_limit)],
+        "max_steps": 12,
+        "verbosity_level": 2,
+        "planning_interval": 4,
+        "managed_agents": [text_webbrowser_agent],
+    }
+    
+    if manager_agent_type == "CodeAgent":
+        manager_agent_config["additional_authorized_imports"] = ["*"]
+        manager_agent = CodeAgent(**manager_agent_config)
+    else:  # ToolCallingAgent
+        manager_agent = ToolCallingAgent(**manager_agent_config)
 
     return manager_agent
 
@@ -125,7 +155,13 @@ def create_agent(model="o1", api_base=None, api_key=None):
 def main():
     args = parse_args()
 
-    agent = create_agent(model=args.model, api_base=args.api_base, api_key=args.api_key)
+    agent = create_agent(
+        model=args.model, 
+        api_base=args.api_base, 
+        api_key=args.api_key,
+        manager_agent_type=args.manager_agent_type,
+        search_agent_type=args.search_agent_type
+    )
 
     answer = agent.run(args.question)
 
