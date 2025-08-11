@@ -18,7 +18,6 @@ from smolagents import Tool
 from .cookies import COOKIES
 from .mdconvert import FileConversionException, MarkdownConverter, UnsupportedFormatException
 
-
 class SimpleTextBrowser:
     """(In preview) An extremely simple text-based web browser comparable to Lynx. Suitable for Agentic use."""
 
@@ -369,8 +368,6 @@ class SimpleTextBrowser:
         header += f"Viewport position: Showing page {current_page + 1} of {total_pages}.\n"
         return (header, self.viewport)
 
-
-
 class VisitTool(Tool):
     name = "visit_page"
     description = "Visit a webpage at a given URL and return its text. Given a url to a YouTube video, this returns the transcript."
@@ -385,9 +382,6 @@ class VisitTool(Tool):
         self.browser.visit_page(url)
         header, content = self.browser._state()
         return header.strip() + "\n=======================\n" + content
-
-
-
 
 class ArchiveSearchTool(Tool):
     name = "find_archived_url"
@@ -431,7 +425,6 @@ class ArchiveSearchTool(Tool):
             + content
         )
 
-
 class PageUpTool(Tool):
     name = "page_up"
     description = "Scroll the viewport UP one page-length in the current webpage and return the new viewport content."
@@ -446,7 +439,6 @@ class PageUpTool(Tool):
         self.browser.page_up()
         header, content = self.browser._state()
         return header.strip() + "\n=======================\n" + content
-
 
 class PageDownTool(Tool):
     name = "page_down"
@@ -464,7 +456,6 @@ class PageDownTool(Tool):
         self.browser.page_down()
         header, content = self.browser._state()
         return header.strip() + "\n=======================\n" + content
-
 
 class FinderTool(Tool):
     name = "find_on_page_ctrl_f"
@@ -492,7 +483,6 @@ class FinderTool(Tool):
             )
         else:
             return header.strip() + "\n=======================\n" + content
-
 
 class FindNextTool(Tool):
     name = "find_next"

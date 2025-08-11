@@ -40,12 +40,10 @@ from smolagents import (
     ToolCallingAgent,
 )
 
-
 load_dotenv(override=True)
 login(os.getenv("HF_TOKEN"))
 
 append_answer_lock = threading.Lock()
-
 
 def parse_args():
     parser = argparse.ArgumentParser()
@@ -73,13 +71,11 @@ def parse_args():
     )
     return parser.parse_args()
 
-
 ### IMPORTANT: EVALUATION SWITCHES
 
 print("Make sure you deactivated any VPN like Tailscale, else some URLs will be blocked!")
 
 custom_role_conversions = {"tool-call": "assistant", "tool-response": "user"}
-
 
 user_agent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36 Edg/119.0.0.0"
 
@@ -94,7 +90,6 @@ BROWSER_CONFIG = {
 }
 
 os.makedirs(f"./{BROWSER_CONFIG['downloads_folder']}", exist_ok=True)
-
 
 def create_model(model_name: str, api_base: str = None, api_key: str = None) -> Model:
     """Create a model instance based on the provided parameters."""
@@ -114,7 +109,6 @@ def create_model(model_name: str, api_base: str = None, api_key: str = None) -> 
         model_params["max_tokens"] = 4096
         
     return LiteLLMModel(**model_params)
-
 
 def create_agent_team(model: Model, manager_agent_type: str = "CodeAgent", search_agent_type: str = "ToolCallingAgent"):
     text_limit = 100000
@@ -179,7 +173,6 @@ def create_agent_team(model: Model, manager_agent_type: str = "CodeAgent", searc
         
     return manager_agent
 
-
 def load_gaia_dataset(use_raw_dataset: bool, set_to_run: str) -> datasets.Dataset:
     if not os.path.exists("data/gaia"):
         if use_raw_dataset:
@@ -214,7 +207,6 @@ def load_gaia_dataset(use_raw_dataset: bool, set_to_run: str) -> datasets.Datase
     eval_ds = eval_ds.map(preprocess_file_paths)
     return eval_ds
 
-
 def append_answer(entry: dict, jsonl_file: str) -> None:
     jsonl_path = Path(jsonl_file)
     jsonl_path.parent.mkdir(parents=True, exist_ok=True)
@@ -222,7 +214,6 @@ def append_answer(entry: dict, jsonl_file: str) -> None:
         fp.write(json.dumps(entry) + "\n")
     assert jsonl_path.exists(), "File not found!"
     print("Answer exported to file:", jsonl_path.resolve())
-
 
 def answer_single_question(
     example: dict, model_name: str, answers_file: str, visual_inspection_tool: TextInspectorTool, 
@@ -308,7 +299,6 @@ Run verification steps if that's needed, you must make sure you find the correct
     }
     append_answer(annotated_example, answers_file)
 
-
 def get_examples_to_answer(answers_file: str, eval_ds: datasets.Dataset) -> list[dict]:
     print(f"Loading answers from {answers_file}...")
     try:
@@ -319,7 +309,6 @@ def get_examples_to_answer(answers_file: str, eval_ds: datasets.Dataset) -> list
         print("No usable records! ▶️ Starting new.")
         done_questions = []
     return [line for line in eval_ds.to_list() if line["question"] not in done_questions and line["file_name"]]
-
 
 def main():
     args = parse_args()
@@ -353,7 +342,6 @@ def main():
     # for example in tasks_to_run:
     #     answer_single_question(example, args.model, answers_file, visualizer, args.api_base, args.api_key)
     print("All tasks processed.")
-
 
 if __name__ == "__main__":
     main()

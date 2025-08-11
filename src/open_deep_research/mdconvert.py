@@ -33,7 +33,6 @@ from bs4 import BeautifulSoup
 from youtube_transcript_api import YouTubeTranscriptApi
 from youtube_transcript_api.formatters import SRTFormatter
 
-
 class _CustomMarkdownify(markdownify.MarkdownConverter):
     """
     A custom version of markdownify's MarkdownConverter. Changes include:
@@ -108,7 +107,6 @@ class _CustomMarkdownify(markdownify.MarkdownConverter):
     def convert_soup(self, soup: Any) -> str:
         return super().convert_soup(soup)  # type: ignore
 
-
 class DocumentConverterResult:
     """The result of converting a document to text."""
 
@@ -116,13 +114,11 @@ class DocumentConverterResult:
         self.title: str | None = title
         self.text_content: str = text_content
 
-
 class DocumentConverter:
     """Abstract superclass of all DocumentConverters."""
 
     def convert(self, local_path: str, **kwargs: Any) -> None | DocumentConverterResult:
         raise NotImplementedError()
-
 
 class PlainTextConverter(DocumentConverter):
     """Anything with content type text/plain"""
@@ -144,7 +140,6 @@ class PlainTextConverter(DocumentConverter):
             title=None,
             text_content=text_content,
         )
-
 
 class HtmlConverter(DocumentConverter):
     """Anything with content type text/html"""
@@ -184,7 +179,6 @@ class HtmlConverter(DocumentConverter):
         return DocumentConverterResult(
             title=None if soup.title is None else soup.title.string, text_content=webpage_text
         )
-
 
 class WikipediaConverter(DocumentConverter):
     """Handle Wikipedia pages separately, focusing only on the main document content."""
@@ -229,7 +223,6 @@ class WikipediaConverter(DocumentConverter):
             title=main_title,
             text_content=webpage_text,
         )
-
 
 class YouTubeConverter(DocumentConverter):
     """Handle YouTube specially, focusing on the video title, description, and transcript."""
@@ -350,7 +343,6 @@ class YouTubeConverter(DocumentConverter):
                         return ret
         return None
 
-
 class PdfConverter(DocumentConverter):
     """
     Converts PDFs to Markdown. Most style information is ignored, so the results are essentially plain-text.
@@ -366,7 +358,6 @@ class PdfConverter(DocumentConverter):
             title=None,
             text_content=pdfminer.high_level.extract_text(local_path),
         )
-
 
 class DocxConverter(HtmlConverter):
     """
@@ -386,7 +377,6 @@ class DocxConverter(HtmlConverter):
             result = self._convert(html_content)
 
         return result
-
 
 class XlsxConverter(HtmlConverter):
     """
@@ -410,7 +400,6 @@ class XlsxConverter(HtmlConverter):
             title=None,
             text_content=md_content.strip(),
         )
-
 
 class PptxConverter(HtmlConverter):
     """
@@ -497,7 +486,6 @@ class PptxConverter(HtmlConverter):
             return True
         return False
 
-
 class MediaConverter(DocumentConverter):
     """
     Abstract class for multi-modal media (e.g., images and audio)
@@ -513,7 +501,6 @@ class MediaConverter(DocumentConverter):
                 return json.loads(result)[0]
             except Exception:
                 return None
-
 
 class WavConverter(MediaConverter):
     """
@@ -563,7 +550,6 @@ class WavConverter(MediaConverter):
         with sr.AudioFile(local_path) as source:
             audio = recognizer.record(source)
             return recognizer.recognize_google(audio).strip()
-
 
 class Mp3Converter(WavConverter):
     """
@@ -627,7 +613,6 @@ class Mp3Converter(WavConverter):
             text_content=md_content.strip(),
         )
 
-
 class ZipConverter(DocumentConverter):
     """
     Extracts ZIP files to a permanent local directory and returns a listing of extracted files.
@@ -674,7 +659,6 @@ class ZipConverter(DocumentConverter):
             md_content += f"* {file}\n"
 
         return DocumentConverterResult(title="Extracted Files", text_content=md_content.strip())
-
 
 class ImageConverter(MediaConverter):
     """
@@ -756,14 +740,11 @@ class ImageConverter(MediaConverter):
         response = client.chat.completions.create(model=model, messages=messages)
         return response.choices[0].message.content
 
-
 class FileConversionException(Exception):
     pass
 
-
 class UnsupportedFormatException(Exception):
     pass
-
 
 class MarkdownConverter:
     """(In preview) An extremely simple text-based document reader, suitable for LLM use.

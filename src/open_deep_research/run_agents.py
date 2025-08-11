@@ -4,20 +4,17 @@ import shutil
 import textwrap
 from pathlib import Path
 
-
 def get_image_description(file_name: str, question: str, visual_inspection_tool) -> str:
     prompt = f"""Write a caption of 5 sentences for this image. Pay special attention to any details that might be useful for someone answering the following question:
 {question}. But do not try to answer the question directly!
 Do not add any information that is not present in the image."""
     return visual_inspection_tool(image_path=file_name, question=prompt)
 
-
 def get_document_description(file_path: str, question: str, document_inspection_tool) -> str:
     prompt = f"""Write a caption of 5 sentences for this document. Pay special attention to any details that might be useful for someone answering the following question:
 {question}. But do not try to answer the question directly!
 Do not add any information that is not present in the document."""
     return document_inspection_tool.forward_initial_exam_mode(file_path=file_path, question=prompt)
-
 
 def get_single_file_description(file_path: str, question: str, visual_inspection_tool, document_inspection_tool):
     file_extension = file_path.split(".")[-1]
@@ -42,7 +39,6 @@ def get_single_file_description(file_path: str, question: str, visual_inspection
     else:
         return f" - Attached file: {file_path}"
 
-
 def get_zip_description(file_path: str, question: str, visual_inspection_tool, document_inspection_tool):
     folder_path = file_path.replace(".zip", "")
     os.makedirs(folder_path, exist_ok=True)
@@ -57,5 +53,4 @@ def get_zip_description(file_path: str, question: str, visual_inspection_tool, d
                 prefix="    ",
             )
     return prompt_use_files
-
 

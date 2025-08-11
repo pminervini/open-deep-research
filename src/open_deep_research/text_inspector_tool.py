@@ -1,7 +1,6 @@
 from smolagents import Tool
 from smolagents.models import Model
 
-
 class TextInspectorTool(Tool):
     name = "inspect_file_as_text"
     description = """

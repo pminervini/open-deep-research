@@ -27,12 +27,10 @@ from smolagents import (
     ToolCallingAgent,
 )
 
-
 load_dotenv(override=True)
 login(os.getenv("HF_TOKEN"))
 
 append_answer_lock = threading.Lock()
-
 
 def parse_args():
     parser = argparse.ArgumentParser()
@@ -58,7 +56,6 @@ def parse_args():
     )
     return parser.parse_args()
 
-
 custom_role_conversions = {"tool-call": "assistant", "tool-response": "user"}
 
 user_agent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36 Edg/119.0.0.0"
@@ -74,7 +71,6 @@ BROWSER_CONFIG = {
 }
 
 os.makedirs(f"./{BROWSER_CONFIG['downloads_folder']}", exist_ok=True)
-
 
 def create_agent(model="o1", api_base=None, api_key=None, manager_agent_type="CodeAgent", search_agent_type="ToolCallingAgent"):
     model_params = {
@@ -151,7 +147,6 @@ def create_agent(model="o1", api_base=None, api_key=None, manager_agent_type="Co
 
     return manager_agent
 
-
 def main():
     args = parse_args()
 
@@ -166,7 +161,6 @@ def main():
     answer = agent.run(args.question)
 
     print(f"Got this answer: {answer}")
-
 
 if __name__ == "__main__":
     main()

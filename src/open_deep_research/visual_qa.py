@@ -9,11 +9,7 @@ from dotenv import load_dotenv
 
 from smolagents import tool
 
-
 load_dotenv(override=True)
-
-
-
 
 # Function to encode the image
 def encode_image(image_path):
@@ -44,11 +40,6 @@ def encode_image(image_path):
 
     with open(image_path, "rb") as image_file:
         return base64.b64encode(image_file.read()).decode("utf-8")
-
-
-
-
-
 
 @tool
 def visualizer(image_path: str, question: str | None = None) -> str:
