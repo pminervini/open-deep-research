@@ -1,4 +1,4 @@
-from run import create_agent
+from cli.research_agent import create_agent
 
 from smolagents.gradio_ui import GradioUI
 

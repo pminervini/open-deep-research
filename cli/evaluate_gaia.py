@@ -12,13 +12,13 @@ import datasets
 import pandas as pd
 from dotenv import load_dotenv
 from huggingface_hub import login, snapshot_download
-from scripts.reformulator import prepare_response
-from scripts.run_agents import (
+from src.open_deep_research.reformulator import prepare_response
+from src.open_deep_research.run_agents import (
     get_single_file_description,
     get_zip_description,
 )
-from scripts.text_inspector_tool import TextInspectorTool
-from scripts.text_web_browser import (
+from src.open_deep_research.text_inspector_tool import TextInspectorTool
+from src.open_deep_research.text_web_browser import (
     ArchiveSearchTool,
     FinderTool,
     FindNextTool,
@@ -27,7 +27,7 @@ from scripts.text_web_browser import (
     SimpleTextBrowser,
     VisitTool,
 )
-from scripts.visual_qa import visualizer
+from src.open_deep_research.visual_qa import visualizer
 from tqdm import tqdm
 
 from smolagents import (

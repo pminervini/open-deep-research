@@ -37,7 +37,7 @@ This is the **Open Deep Research** example - an open replication of OpenAI's Dee
 - Search agent uses `ToolCallingAgent` with `max_steps=20` and planning every 4 steps
 - Both agents have `verbosity_level=2` for detailed logging
 
-**Web Browsing Tools** (`scripts/text_web_browser.py`):
+**Web Browsing Tools** (`src/open_deep_research/text_web_browser.py`):
 - `SimpleTextBrowser` - Text-based web browser with configurable viewport
 - Navigation tools: `VisitTool`, `PageUpTool`, `PageDownTool`, `FinderTool`
 - `ArchiveSearchTool` for accessing archived web content

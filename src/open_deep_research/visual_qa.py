@@ -151,7 +151,7 @@ def visualizer(image_path: str, question: str | None = None) -> str:
 
     import requests
 
-    from .visual_qa import encode_image
+    from src.open_deep_research.visual_qa import encode_image
 
     add_note = False
     if not question:
