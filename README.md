@@ -48,7 +48,7 @@ python cli/research-agent-cli.py --model "gpt-4o-mini" "2+2?"
 
 ### Using a local OpenAI-compatible endpoint
 ```bash
-python cli/research-agent-cli.py --model "qwen3:32b" --api-base "http://127.0.0.1:11434/v1" --api-key "dummy" "2+2?"
+python cli/research-agent-cli.py --model "openai/qwen3:32b" --api-base "http://127.0.0.1:11434/v1" --api-key "dummy" "2+2?"
 ```
 
 ### CLI Options
@@ -67,7 +67,7 @@ python cli/gaia-eval-cli.py --model "gpt-4o" --run-name "my-evaluation" --concur
 
 ### Using a local OpenAI-compatible endpoint
 ```bash
-python cli/gaia-eval-cli.py --model "qwen3:32b" --api-base "http://127.0.0.1:11434/v1" --api-key "dummy" --run-name "local-evaluation" --concurrency 4
+python cli/gaia-eval-cli.py --model "openai/qwen3:32b" --api-base "http://127.0.0.1:11434/v1" --api-key "dummy" --run-name "local-evaluation" --concurrency 4
 ```
 
 ### GAIA CLI Options
