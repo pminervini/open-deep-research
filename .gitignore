@@ -200,6 +200,7 @@ ehthumbs_vista.db
 
 # Project-specific
 downloads_folder/
+.gradio/
 *.pyc
 *.pyo
 *.pyd
