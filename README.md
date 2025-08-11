@@ -43,7 +43,7 @@ Then you're good to go! Run the research agent script, as in:
 
 ### Using OpenAI or other standard providers
 ```bash
-python cli/research-agent-cli.py --model "gpt-4o-mini" "Your question here!"
+python cli/research-agent-cli.py --model "gpt-4o-mini" "2+2?"
 ```
 
 ### Using a local OpenAI-compatible endpoint
