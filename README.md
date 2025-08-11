@@ -52,7 +52,7 @@ python cli/research-agent-cli.py --model "openai/qwen3:32b" --api-base "http://1
 ```
 
 ### CLI Options
-- `--model`: Model name (replaces the old `--model-id` flag)
+- `--model`: Model name
 - `--api-base`: Base URL for custom API endpoints (e.g., local LLM servers)
 - `--api-key`: API key for authentication
 
@@ -71,7 +71,7 @@ python cli/gaia-eval-cli.py --model "openai/qwen3:32b" --api-base "http://127.0.
 ```
 
 ### GAIA CLI Options
-- `--model`: Model name (replaces the old `--model-id` flag)
+- `--model`: Model name
 - `--api-base`: Base URL for custom API endpoints (e.g., local LLM servers)  
 - `--api-key`: API key for authentication
 - `--run-name`: Name for this evaluation run (required)
