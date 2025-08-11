@@ -149,13 +149,7 @@ def create_agent(model="o1", api_base=None, api_key=None, manager_agent_type="Co
 def main():
     args = parse_args()
 
-    agent = create_agent(
-        model=args.model, 
-        api_base=args.api_base, 
-        api_key=args.api_key,
-        manager_agent_type=args.manager_agent_type,
-        search_agent_type=args.search_agent_type
-    )
+    agent = create_agent(model=args.model, api_base=args.api_base, api_key=args.api_key, manager_agent_type=args.manager_agent_type, search_agent_type=args.search_agent_type)
 
     answer = agent.run(args.question)
 
