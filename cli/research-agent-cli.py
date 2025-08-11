@@ -22,7 +22,6 @@ from src.open_deep_research.visual_qa import visualizer
 from smolagents import (
     CodeAgent,
     GoogleSearchTool,
-    # InferenceClientModel,
     LiteLLMModel,
     ToolCallingAgent,
 )

@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 from smolagents import Tool
 from smolagents.models import Model
 

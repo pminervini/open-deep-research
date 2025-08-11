@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 # Shamelessly stolen from Microsoft Autogen team: thanks to them for this great resource!
 # https://github.com/microsoft/autogen/blob/gaia_multiagent_v01_march_1st/autogen/browser_utils.py
 import copy

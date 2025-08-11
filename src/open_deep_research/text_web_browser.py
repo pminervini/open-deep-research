@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 # Shamelessly stolen from Microsoft Autogen team: thanks to them for this great resource!
 # https://github.com/microsoft/autogen/blob/gaia_multiagent_v01_march_1st/autogen/browser_utils.py
 import mimetypes
@@ -219,9 +221,7 @@ class SimpleTextBrowser:
             raise Exception(f"No results found for query: '{query}'. Use a less specific query.")
         if len(results["organic_results"]) == 0:
             year_filter_message = f" with filter year={filter_year}" if filter_year is not None else ""
-            self._set_page_content(
-                f"No results found for '{query}'{year_filter_message}. Try with a more general query, or remove the year filter."
-            )
+            self._set_page_content(f"No results found for '{query}'{year_filter_message}. Try with a more general query, or remove the year filter.")
             return
 
         def _prev_visit(url):

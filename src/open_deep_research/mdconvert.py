@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 # This is copied from Magentic-one's great repo: https://github.com/microsoft/autogen/blob/v0.4.4/python/packages/autogen-magentic-one/src/autogen_magentic_one/markdown_browser/mdconvert.py
 # Thanks to Microsoft researchers for open-sourcing this!
 # type: ignore
@@ -136,10 +138,7 @@ class PlainTextConverter(DocumentConverter):
         text_content = ""
         with open(local_path, "rt", encoding="utf-8") as fh:
             text_content = fh.read()
-        return DocumentConverterResult(
-            title=None,
-            text_content=text_content,
-        )
+        return DocumentConverterResult(title=None, text_content=text_content)
 
 class HtmlConverter(DocumentConverter):
     """Anything with content type text/html"""
@@ -176,9 +175,7 @@ class HtmlConverter(DocumentConverter):
 
         assert isinstance(webpage_text, str)
 
-        return DocumentConverterResult(
-            title=None if soup.title is None else soup.title.string, text_content=webpage_text
-        )
+        return DocumentConverterResult(title=None if soup.title is None else soup.title.string, text_content=webpage_text)
 
 class WikipediaConverter(DocumentConverter):
     """Handle Wikipedia pages separately, focusing only on the main document content."""
@@ -219,10 +216,7 @@ class WikipediaConverter(DocumentConverter):
         else:
             webpage_text = _CustomMarkdownify().convert_soup(soup)
 
-        return DocumentConverterResult(
-            title=main_title,
-            text_content=webpage_text,
-        )
+        return DocumentConverterResult(title=main_title, text_content=webpage_text)
 
 class YouTubeConverter(DocumentConverter):
     """Handle YouTube specially, focusing on the video title, description, and transcript."""
@@ -316,10 +310,7 @@ class YouTubeConverter(DocumentConverter):
         title = title if title else soup.title.string
         assert isinstance(title, str)
 
-        return DocumentConverterResult(
-            title=title,
-            text_content=webpage_text,
-        )
+        return DocumentConverterResult(title=title, text_content=webpage_text)
 
     def _get(self, metadata: dict[str, str], keys: list[str], default: str | None = None) -> str | None:
         for k in keys:
@@ -354,10 +345,7 @@ class PdfConverter(DocumentConverter):
         if extension.lower() != ".pdf":
             return None
 
-        return DocumentConverterResult(
-            title=None,
-            text_content=pdfminer.high_level.extract_text(local_path),
-        )
+        return DocumentConverterResult(title=None, text_content=pdfminer.high_level.extract_text(local_path))
 
 class DocxConverter(HtmlConverter):
     """
@@ -396,10 +384,7 @@ class XlsxConverter(HtmlConverter):
             html_content = sheets[s].to_html(index=False)
             md_content += self._convert(html_content).text_content.strip() + "\n\n"
 
-        return DocumentConverterResult(
-            title=None,
-            text_content=md_content.strip(),
-        )
+        return DocumentConverterResult(title=None, text_content=md_content.strip())
 
 class PptxConverter(HtmlConverter):
     """
@@ -468,10 +453,7 @@ class PptxConverter(HtmlConverter):
                     md_content += notes_frame.text
                 md_content = md_content.strip()
 
-        return DocumentConverterResult(
-            title=None,
-            text_content=md_content.strip(),
-        )
+        return DocumentConverterResult(title=None, text_content=md_content.strip())
 
     def _is_picture(self, shape):
         if shape.shape_type == pptx.enum.shapes.MSO_SHAPE_TYPE.PICTURE:
@@ -540,10 +522,7 @@ class WavConverter(MediaConverter):
         except Exception:
             md_content += "\n\n### Audio Transcript:\nError. Could not transcribe this audio."
 
-        return DocumentConverterResult(
-            title=None,
-            text_content=md_content.strip(),
-        )
+        return DocumentConverterResult(title=None, text_content=md_content.strip())
 
     def _transcribe_audio(self, local_path) -> str:
         recognizer = sr.Recognizer()
@@ -608,10 +587,7 @@ class Mp3Converter(WavConverter):
             os.unlink(temp_path)
 
         # Return the result
-        return DocumentConverterResult(
-            title=None,
-            text_content=md_content.strip(),
-        )
+        return DocumentConverterResult(title=None, text_content=md_content.strip())
 
 class ZipConverter(DocumentConverter):
     """
@@ -697,16 +673,11 @@ class ImageConverter(MediaConverter):
         if mlm_client is not None and mlm_model is not None:
             md_content += (
                 "\n# Description:\n"
-                + self._get_mlm_description(
-                    local_path, extension, mlm_client, mlm_model, prompt=kwargs.get("mlm_prompt")
-                ).strip()
+                + self._get_mlm_description(local_path, extension, mlm_client, mlm_model, prompt=kwargs.get("mlm_prompt")).strip()
                 + "\n"
             )
 
-        return DocumentConverterResult(
-            title=None,
-            text_content=md_content,
-        )
+        return DocumentConverterResult(title=None, text_content=md_content)
 
     def _get_mlm_description(self, local_path, extension, client, model, prompt=None):
         if prompt is None or prompt.strip() == "":

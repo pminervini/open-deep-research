@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 import json
 import os
 import shutil
@@ -48,9 +50,6 @@ def get_zip_description(file_path: str, question: str, visual_inspection_tool, d
     for root, dirs, files in os.walk(folder_path):
         for file in files:
             file_path = os.path.join(root, file)
-            prompt_use_files += "\n" + textwrap.indent(
-                get_single_file_description(file_path, question, visual_inspection_tool, document_inspection_tool),
-                prefix="    ",
-            )
+            prompt_use_files += "\n" + textwrap.indent(get_single_file_description(file_path, question, visual_inspection_tool, document_inspection_tool), prefix="    ")
     return prompt_use_files
 
