@@ -21,6 +21,7 @@ from smolagents import (
     GoogleSearchTool,
     # InferenceClientModel,
     LiteLLMModel,
+    OpenAIServerModel,
     ToolCallingAgent,
 )
 
@@ -36,7 +37,9 @@ def parse_args():
     parser.add_argument(
         "question", type=str, help="for example: 'How many studio albums did Mercedes Sosa release before 2007?'"
     )
-    parser.add_argument("--model-id", type=str, default="o1")
+    parser.add_argument("--model", type=str, default="o1")
+    parser.add_argument("--api-base", type=str, help="Base URL for the API endpoint")
+    parser.add_argument("--api-key", type=str, help="API key for authentication")
     return parser.parse_args()
 
 
@@ -57,15 +60,25 @@ BROWSER_CONFIG = {
 os.makedirs(f"./{BROWSER_CONFIG['downloads_folder']}", exist_ok=True)
 
 
-def create_agent(model_id="o1"):
+def create_agent(model="o1", api_base=None, api_key=None):
     model_params = {
-        "model_id": model_id,
+        "model_id": model,
         "custom_role_conversions": custom_role_conversions,
         "max_completion_tokens": 8192,
     }
-    if model_id == "o1":
-        model_params["reasoning_effort"] = "high"
-    model = LiteLLMModel(**model_params)
+    
+    # Use OpenAIServerModel for custom API endpoints, LiteLLMModel for standard providers
+    if api_base:
+        model_params["api_base"] = api_base
+        if api_key:
+            model_params["api_key"] = api_key
+        model = OpenAIServerModel(**model_params)
+    else:
+        if api_key:
+            model_params["api_key"] = api_key
+        if model == "o1":
+            model_params["reasoning_effort"] = "high"
+        model = LiteLLMModel(**model_params)
 
     text_limit = 100000
     browser = SimpleTextBrowser(**BROWSER_CONFIG)
@@ -114,7 +127,7 @@ def create_agent(model_id="o1"):
 def main():
     args = parse_args()
 
-    agent = create_agent(model_id=args.model_id)
+    agent = create_agent(model=args.model, api_base=args.api_base, api_key=args.api_key)
 
     answer = agent.run(args.question)
 

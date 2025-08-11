@@ -40,9 +40,21 @@ For example, to use the default `gpt-4o-mini` model, you need to set the `OPENAI
 ## Usage
 
 Then you're good to go! Run the research agent script, as in:
+
+### Using OpenAI or other standard providers
 ```bash
-python cli/research-agent-cli.py --model-id "gpt-4o-mini" "Your question here!"
+python cli/research-agent-cli.py --model "gpt-4o-mini" "Your question here!"
 ```
+
+### Using a local OpenAI-compatible endpoint
+```bash
+python cli/research-agent-cli.py --model "qwen3:32b" --api-base "http://127.0.0.1:11434/v1" --api-key "dummy" "Your question here!"
+```
+
+### CLI Options
+- `--model`: Model name (replaces the old `--model-id` flag)
+- `--api-base`: Base URL for custom API endpoints (e.g., local LLM servers)
+- `--api-key`: API key for authentication
 
 ## Full reproducibility of results
 
