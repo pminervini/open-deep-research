@@ -5,9 +5,9 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ## Development Commands
 
 ### Running the Application
-- `python run.py --model-id "o1" "Your question here"` - Run the main research agent with a question
+- `python cli/research_agent.py --model-id "gpt-4o-mini" "Your question here"` - Run the main research agent with a question
 - `python app.py` - Launch the Gradio web interface for interactive use
-- `python run_gaia.py` - Run evaluation on the GAIA benchmark dataset
+- `python cli/evaluate_gaia.py` - Run evaluation on the GAIA benchmark dataset
 
 ### Setup Commands
 - `pip install -r requirements.txt` - Install project-specific dependencies
@@ -27,7 +27,7 @@ This is the **Open Deep Research** example - an open replication of OpenAI's Dee
 
 ### Core Components
 
-**Main Agent Structure** (`run.py`):
+**Main Agent Structure** (`cli/research_agent.py`):
 - `Manager Agent` - A `CodeAgent` that orchestrates the research process and handles complex reasoning
 - `Search Agent` - A `ToolCallingAgent` specialized for web browsing and information gathering
 - Uses LiteLLM for model abstraction, defaulting to OpenAI's o1 model

@@ -39,9 +39,9 @@ For example, to use the default `gpt-4o-mini` model, you need to set the `OPENAI
 
 ## Usage
 
-Then you're good to go! Run the run.py script, as in:
+Then you're good to go! Run the research agent script, as in:
 ```bash
-python run.py --model-id "gpt-4o-mini" "Your question here!"
+python cli/research_agent.py --model-id "gpt-4o-mini" "Your question here!"
 ```
 
 ## Full reproducibility of results
