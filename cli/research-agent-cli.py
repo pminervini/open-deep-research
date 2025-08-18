@@ -23,9 +23,9 @@ def parse_args():
     parser.add_argument(
         "question", type=str, help="for example: 'How many studio albums did Mercedes Sosa release before 2007?'"
     )
-    parser.add_argument("--model", type=str, default="o1")
-    parser.add_argument("--api-base", type=str, help="Base URL for the API endpoint")
-    parser.add_argument("--api-key", type=str, help="API key for authentication")
+    parser.add_argument("--model", type=str, default="gpt-oss:120b")
+    parser.add_argument("--api-base", type=str, help="Base URL for the API endpoint", default="http://localhost:11434/v1")
+    parser.add_argument("--api-key", type=str, help="API key for authentication", default="api-key")
     parser.add_argument(
         "--manager-agent-type", 
         type=str, 
@@ -58,7 +58,7 @@ BROWSER_CONFIG = {
 
 os.makedirs(f"./{BROWSER_CONFIG['downloads_folder']}", exist_ok=True)
 
-def create_agent(model="o1", api_base=None, api_key=None, manager_agent_type="CodeAgent", search_agent_type="ToolCallingAgent"):
+def create_agent(model="gpt-oss:120b", api_base=None, api_key=None, manager_agent_type="CodeAgent", search_agent_type="ToolCallingAgent"):
     model_params = {
         "model_id": model,
         "custom_role_conversions": custom_role_conversions,
