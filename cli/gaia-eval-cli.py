@@ -226,7 +226,7 @@ Run verification steps if that's needed, you must make sure you find the correct
 
     start_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     try:
-        # Run agent 🚀
+        # Run agent
         final_result = agent.run(augmented_question)
 
         agent_memory = agent.write_memory_to_messages()
@@ -285,7 +285,7 @@ def get_examples_to_answer(answers_file: str, eval_ds: datasets.Dataset) -> list
         print(f"Found {len(done_questions)} previous results!")
     except Exception as e:
         print("Error when loading records: ", e)
-        print("No usable records! ▶️ Starting new.")
+        print("No usable records! Starting new.")
         done_questions = []
     return [line for line in eval_ds.to_list() if line["question"] not in done_questions and line["file_name"]]
 
