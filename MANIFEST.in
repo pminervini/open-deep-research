@@ -1,0 +1,13 @@
+include README.md
+include requirements.txt
+include CLAUDE.md
+include GEMINI.md
+recursive-include handbooks *.md
+recursive-include tests *.py
+recursive-include cli *.py
+prune downloads*
+prune __pycache__
+global-exclude *.pyc
+global-exclude *.pyo
+global-exclude *.orig
+global-exclude *.rej
