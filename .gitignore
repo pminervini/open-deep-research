@@ -212,3 +212,6 @@ downloads_folder/
 *.pkg
 *.deb
 *.rpm
+
+# Claude Code instructions file
+CLAUDE.md
