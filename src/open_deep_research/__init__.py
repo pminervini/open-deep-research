@@ -16,15 +16,13 @@ Key Components:
 
 __version__ = "0.1.0"
 __author__ = "Pasquale Minervini"
-__email__ = "p.minervini@example.com"
+__email__ = "p.minervini@gmail.com"
 
-from .run_agents import run_search_and_manager_agents
-from .text_web_browser import SimpleTextBrowser
-from .text_inspector_tool import TextInspectorTool
-from .visual_qa import visualizer
+from open_deep_research.text_web_browser import SimpleTextBrowser
+from open_deep_research.text_inspector_tool import TextInspectorTool
+from open_deep_research.visual_qa import visualizer
 
 __all__ = [
-    "run_search_and_manager_agents",
     "SimpleTextBrowser", 
     "TextInspectorTool",
     "visualizer",

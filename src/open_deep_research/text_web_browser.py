@@ -17,8 +17,8 @@ from serpapi import GoogleSearch
 
 from smolagents import Tool
 
-from .cookies import COOKIES
-from .mdconvert import FileConversionException, MarkdownConverter, UnsupportedFormatException
+from open_deep_research.cookies import COOKIES
+from open_deep_research.mdconvert import FileConversionException, MarkdownConverter, UnsupportedFormatException
 
 class SimpleTextBrowser:
     """(In preview) An extremely simple text-based web browser comparable to Lynx. Suitable for Agentic use."""
