@@ -20,10 +20,10 @@ Examples:
         python cli/research-agent-cli.py "What are the latest developments in quantum computing?"
     
     Using a specific model:
-        python cli/research-agent-cli.py "Compare Tesla and BYD electric vehicle sales in 2024" --model openai/gpt-oss:20b
+        python cli/research-agent-cli.py "Compare Tesla and BYD electric vehicle sales in 2024" --model openai/qwen/qwen3-coder-30b
     
     With custom API endpoint:
-        python cli/research-agent-cli.py "Find the population of Tokyo in 2023" --api-base http://localhost:11434/v1 --api-key api-key
+        python cli/research-agent-cli.py "Find the population of Tokyo in 2023" --api-base http://localhost:1234/v1 --api-key api-key --model openai/gpt-oss-20b
     
     Using specific search tools:
         python cli/research-agent-cli.py "Latest AI research papers" --search-tools duckduckgo,wikipedia
@@ -76,7 +76,7 @@ def parse_args():
     )
     parser.add_argument("--model", '-m', type=str, default="openai/gpt-oss:20b")
     parser.add_argument(
-        "--api-base", type=str, help="Base URL for the API endpoint", default="http://localhost:11434/v1"
+        "--api-base", type=str, help="Base URL for the API endpoint", default="http://localhost:1234/v1"
     )
     parser.add_argument("--api-key", type=str, help="API key for authentication", default="api-key")
     parser.add_argument(

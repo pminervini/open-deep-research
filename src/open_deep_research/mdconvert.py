@@ -23,7 +23,32 @@ import mammoth
 import markdownify
 import pandas as pd
 import pdfminer
-import pdfminer.high_level
+try:
+    import pdfminer.high_level
+    pdfminer_extract_text = pdfminer.high_level.extract_text
+except ImportError:
+    # Fallback for newer pdfminer versions that have HOCRConverter import issues
+    # Implement basic text extraction using lower-level pdfminer functions
+    from pdfminer.pdfinterp import PDFResourceManager, PDFPageInterpreter
+    from pdfminer.converter import TextConverter
+    from pdfminer.layout import LAParams
+    from pdfminer.pdfpage import PDFPage
+    from io import StringIO
+    
+    def pdfminer_extract_text(path):
+        """Fallback text extraction for pdfminer compatibility issues"""
+        output = StringIO()
+        with open(path, 'rb') as file:
+            rsrcmgr = PDFResourceManager()
+            device = TextConverter(rsrcmgr, output, laparams=LAParams())
+            interpreter = PDFPageInterpreter(rsrcmgr, device)
+            
+            for page in PDFPage.get_pages(file):
+                interpreter.process_page(page)
+            
+            device.close()
+        
+        return output.getvalue()
 import pptx
 
 # File-format detection
@@ -345,7 +370,7 @@ class PdfConverter(DocumentConverter):
         if extension.lower() != ".pdf":
             return None
 
-        return DocumentConverterResult(title=None, text_content=pdfminer.high_level.extract_text(local_path))
+        return DocumentConverterResult(title=None, text_content=pdfminer_extract_text(local_path))
 
 class DocxConverter(HtmlConverter):
     """
