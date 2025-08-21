@@ -55,13 +55,13 @@ setup(
             "pytest-cov>=4.0.0",
         ],
     },
-    entry_points={
-        "console_scripts": [
-            "open-deep-research=cli.research-agent-cli:main",
-            "open-deep-research-eval=cli.gaia-eval-cli:main",
-            "open-deep-research-search=cli.search-cli:main",
-        ],
-    },
+    # entry_points={
+    #     "console_scripts": [
+    #         "open-deep-research=cli.research-agent-cli:main",
+    #         "open-deep-research-eval=cli.gaia-eval-cli:main",
+    #         "open-deep-research-search=cli.search-cli:main",
+    #     ],
+    # },
     include_package_data=True,
     zip_safe=False,
     keywords=[
