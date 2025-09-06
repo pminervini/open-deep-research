@@ -1,0 +1,10 @@
+[build-system]
+requires = [
+  "setuptools>=61",
+  "wheel",
+]
+build-backend = "setuptools.build_meta"
+
+# Note: Project metadata remains in setup.py for now.
+# This file enables PEP 517/518 builds to avoid legacy setup.py warnings.
+
